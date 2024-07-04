@@ -1,0 +1,4 @@
+test:
+  image: library/alpine:latest
+  script:
+    - echo "Hello World"
