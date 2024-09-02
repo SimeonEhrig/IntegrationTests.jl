@@ -4,7 +4,52 @@ This section shows how to set up CI tests for different platforms with `Integrat
 
 ## GitLab CI
 
-Coming soon.
+GitLab CI offers the [parent-child-pipeline](https://docs.gitlab.com/ee/ci/pipelines/downstream_pipelines.html#parent-child-pipelines) function. This allows you to generate GitLab CI job yaml code in a GitLab CI job and start the generated jobs in the same pipeline.
+
+
+For our example, let's assume that we use a Julia script called `generateIntegrationTests.jl` that uses `IntegrationTests::depending_projects()` to generate the integration tests. This script generates valid GitLab CI yaml code and outputs it to stdout. The GitLab CI code in `.gitlab-ci.yml` could look like this:
+
+```yaml
+stages:
+  - generator
+  - runTests
+
+generateIntegrationTests:
+  stage: generator
+  image: "julia:1.9"
+  script:
+    - julia --project=. -e 'import Pkg; Pkg.instantiate()'
+    - julia --project=. generateIntegrationTests.jl 2> /dev/null 1> jobs.yaml
+    - cat jobs.yaml
+  interruptible: true
+  artifacts:
+    paths:
+      - jobs.yaml
+    expire_in: 1 week
+
+runIntegrationTests:
+  stage: runTests
+  trigger:
+    include: 
+    - artifact: jobs.yaml
+      job: generateIntegrationTests
+    strategy: depend
+```
+
+The content of the dynamically generated `jobs.yaml` could look as follows for the example packages `MyPkgA` and `MyPkgB`:
+
+```yaml
+integrationTestMyPkgB:
+    image: alpine:latest
+    script:
+        - echo "run Integration Test for package MyPkgB"
+
+integrationTestMyPkgA:
+    image: alpine:latest
+    script:
+        - echo "run Integration Test for package MyPkgA"
+
+```
 
 ## GitHub Actions
 
@@ -35,7 +80,7 @@ jobs:
         - uses: actions/checkout@v3
         - uses: julia-actions/setup-julia@v1
             with:
-            version: 1.9
+            version: "1.9"
             arch: x64
         - uses: julia-actions/cache@v1
         - uses: julia-actions/julia-buildpkg@v1
@@ -62,3 +107,7 @@ The workflow contains two jobs. The first job is the `generate` job, which gener
     `matrix: ${{ steps.set-matrix.outputs.matrix }}` expects a `JSON` array. Fortunately, when we print a Julia vector, the output is in the form of a `JSON` array. Therefore, you can simply use `print(depending_projects())` to generate the output of `generateIntegrationTests.jl`. But be careful not to print any other output, for example, the activation message of `Pkg.activate`. This output can be redirected to `2> /dev/null` for example.
 
 Source: https://tomasvotruba.com/blog/2020/11/16/how-to-make-dynamic-matrix-in-github-actions/
+
+# Real World Example
+
+The `IntegrationTest.jl` package uses the GitLab CI `parent-child-pipeline` and the GitHub Action `matrix` function for its own CI tests to check the functionality. The generator scripts can be found in the `.ci` folder. The GitLab CI Job yaml code is written in the `.gitlab-ci.yml` and the GitHub Action Code is written in the `.github/workflows/integrationTests.yml`.

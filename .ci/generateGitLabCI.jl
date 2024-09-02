@@ -9,7 +9,7 @@ include(joinpath(dirname(@__FILE__), "prepareIntegrationTest.jl"))
 """
     print_job_yaml(job_name::AbstractString)
 
-Generate GitLab CI job yaml for a given package name and print it stdout.
+Generate a GitLab CI job yaml file for a given package name and print it to stdout.
 
 # Arguments
 
