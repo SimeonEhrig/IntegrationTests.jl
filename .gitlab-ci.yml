@@ -4,7 +4,7 @@ stages:
 
 generateIntegrationTests:
   stage: generator
-  image: "julia:1.9"
+  image: "julia:1.10"
   script:
     - julia --project=. -e 'import Pkg; Pkg.instantiate()'
     - julia --project=. .ci/generateGitLabCI.jl 2>/dev/null 1> jobs.yaml
