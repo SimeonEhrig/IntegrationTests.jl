@@ -16,7 +16,7 @@ stages:
 
 generateIntegrationTests:
   stage: generator
-  image: "julia:1.9"
+  image: "julia:1.10"
   script:
     - julia --project=. -e 'import Pkg; Pkg.instantiate()'
     - julia --project=. generateIntegrationTests.jl 2> /dev/null 1> jobs.yaml
@@ -80,7 +80,7 @@ jobs:
         - uses: actions/checkout@v3
         - uses: julia-actions/setup-julia@v1
             with:
-            version: "1.9"
+            version: "1.10"
             arch: x64
         - uses: julia-actions/cache@v1
         - uses: julia-actions/julia-buildpkg@v1
