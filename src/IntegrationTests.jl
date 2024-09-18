@@ -6,10 +6,10 @@ export depending_projects
 export build_dependency_graph
 
 """
-build_dependency_graph(
-    info::Union{Pkg.API.ProjectInfo,Pkg.API.PackageInfo}=Pkg.project(),
-    visited_packages::AbstractVector{String}=Vector{String}(),
-)::Dict{String,Union{Dict,Nothing}}
+    build_dependency_graph(
+        info::Union{Pkg.API.ProjectInfo,Pkg.API.PackageInfo}=Pkg.project(),
+        visited_packages::AbstractVector{String}=Vector{String}(),
+    )::Dict{String,Union{Dict,Nothing}}
 
 Construct the dependency graph of the currently active project.
 
@@ -55,8 +55,8 @@ end
     depending_projects(
         package_name::AbstractString, 
         package_filter::Union{<:AbstractString,Regex}
-        project_tree::AbstractDict=PkgDependency.builddict(Pkg.project().uuid, Pkg.project())
-    ) -> Vector{String}
+        project_tree::AbstractDict=build_dependency_graph()
+    )::Vector{String}
 
 Returns a list of packages that have the package `package_name` as a dependency. 
 
@@ -89,8 +89,8 @@ end
     depending_projects(
         package_name::AbstractString, 
         package_filter::AbstractVector{<:AbstractString}, 
-        project_tree::AbstractDict=PkgDependency.builddict(Pkg.project().uuid, Pkg.project())
-    ) -> Vector{String}
+        project_tree::AbstractDict=build_dependency_graph()
+    )::Vector{String}
 """
 function depending_projects(
     package_name::AbstractString,
