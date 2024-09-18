@@ -1,0 +1,24 @@
+stages:
+  - generator
+  - runTests
+
+generateIntegrationTests:
+  stage: generator
+  image: "julia:1.10"
+  script:
+    - julia --project=. -e 'import Pkg; Pkg.instantiate()'
+    - julia --project=. .ci/generateGitLabCI.jl 2>/dev/null 1> jobs.yaml
+    - cat jobs.yaml
+  interruptible: true
+  artifacts:
+    paths:
+      - jobs.yaml
+    expire_in: 1 week
+
+runIntegrationTests:
+  stage: runTests
+  trigger:
+    include: 
+    - artifact: jobs.yaml
+      job: generateIntegrationTests
+    strategy: depend
