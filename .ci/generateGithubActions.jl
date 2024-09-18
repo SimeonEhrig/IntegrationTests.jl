@@ -2,7 +2,6 @@ module getDeps
 
 using IntegrationTests
 using Pkg
-using PkgDependency
 
 include(joinpath(dirname(@__FILE__), "prepareIntegrationTest.jl"))
 

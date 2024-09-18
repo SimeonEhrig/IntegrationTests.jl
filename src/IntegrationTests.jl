@@ -1,9 +1,55 @@
 module IntegrationTests
 
 using Pkg
-using PkgDependency
 
 export depending_projects
+export build_dependency_graph
+
+"""
+build_dependency_graph(
+    info::Union{Pkg.API.ProjectInfo,Pkg.API.PackageInfo}=Pkg.project(),
+    visited_packages::AbstractVector{String}=Vector{String}(),
+)::Dict{String,Union{Dict,Nothing}}
+
+Construct the dependency graph of the currently active project.
+
+# Arguments
+
+- `project_info::Union{Pkg.API.ProjectInfo,Pkg.API.PackageInfo}`: properties about the current 
+        project and Julia packages, such as name and version
+- `visited_packages::AbstractVector{String}`: list of packages that have already been processed
+
+# Returns
+
+Dependency diagram of the active project, stored in a `Dict`. The key is always the package name. 
+The value is either a `Dict` if the package has dependencies or `nothing` if there are no dependencies.
+If a package is a dependency more than once, only the first appearance has dependencies. 
+All other appearances have no dependencies. Standard library packages are ignored.
+"""
+function build_dependency_graph(
+    project_info::Union{Pkg.API.ProjectInfo,Pkg.API.PackageInfo}=Pkg.project(),
+    visited_packages::AbstractVector{String}=Vector{String}(),
+)::Dict{String,Union{Dict,Nothing}}
+    graph = Dict()
+
+    for (name, uuid) in project_info.dependencies
+        # if the version number is nothing, it is the stdlib and we can ignore it
+        if isnothing(Pkg.dependencies()[uuid].version)
+            continue
+        end
+
+        # if a dependency is used by many packages, only adds one time with all dependencies
+        # the next time, add it without dependencies to avoid redundancy
+        if !(name in visited_packages)
+            graph[name] = build_dependency_graph(Pkg.dependencies()[uuid], visited_packages)
+            push!(visited_packages, name)
+        else
+            graph[name] = nothing
+        end
+    end
+
+    return graph
+end
 
 """
     depending_projects(
@@ -31,7 +77,7 @@ A `Vector{String}` containing the names of all packages that have the given depe
 function depending_projects(
     package_name::AbstractString,
     package_filter::Union{<:AbstractString,Regex},
-    project_tree::AbstractDict=PkgDependency.builddict(Pkg.project().uuid, Pkg.project()),
+    project_tree::AbstractDict=build_dependency_graph(),
 )::Vector{String}
     packages::Vector{String} = []
     visited_packages::Vector{String} = []
@@ -49,7 +95,7 @@ end
 function depending_projects(
     package_name::AbstractString,
     package_filter::AbstractVector{<:AbstractString},
-    project_tree::AbstractDict=PkgDependency.builddict(Pkg.project().uuid, Pkg.project()),
+    project_tree::AbstractDict=build_dependency_graph(),
 )::Vector{String}
     packages::Vector{String} = []
     visited_packages::Vector{String} = []
