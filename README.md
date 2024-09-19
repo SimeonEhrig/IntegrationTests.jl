@@ -1,17 +1,8 @@
 # IntegrationTests
 
-[![Doc Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qedjl-project.github.io/IntegrationTests.jl/main)
+[![Doc Stable](https://img.shields.io/badge/docs-stable-blue.svg)](https://qedjl-project.github.io/IntegrationTests.jl/stable/)
 [![Doc Dev](https://img.shields.io/badge/docs-dev-blue.svg)](https://qedjl-project.github.io/IntegrationTests.jl/dev)
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
-
-⚠️ DISCLAIMER ⚠️
-
-This project moves the project independent part of the [integTestGen.jl](https://github.com/QEDjl-project/QED.jl/tree/dev/.ci/integTestGen) script to an external project to make it reusable. If we can use this package in our CI of our QED projects, it is ready for Julia registry and can be used by other projects.
-
-## Roadmap
-
-1. support GitLab CI (version 0.1)
-2. support GitHub Workflows (version 0.2)
 
 # About
 
@@ -77,9 +68,9 @@ graph TD
    qed --> events(QEDevents.jl) --> base
 ```
 
-[Project.toml](https://github.com/QEDjl-project/QED.jl/commit/08613adadea8a85bb4cbf47065d118eaec6f03d6) of the `QED.jl` package.
+[Project.toml](https://github.com/QEDjl-project/QuantumElectrodynamics.jl/blob/08613adadea8a85bb4cbf47065d118eaec6f03d6/Project.toml) of the `QED.jl` package.
 
-For example, if `QEDfields.jl` is changed, `IntegrationTests.jl` returns that `QED.jl` and `QEDprocesses.jl` are dependent on `QEDfields.jl`, and we can generate the integration test jobs. Full CI pipeline examples for GitLab CI and GitHub Actions can be found in the [Pipeline Tutorials](https://qedjl-project.github.io/IntegrationTests.jl/main/pipeline_tutorials.html) section. For more details on the `IntegrationTests.jl` tool, see the [Integration Test Tool](https://qedjl-project.github.io/IntegrationTests.jl/main/integration_test_tool.html) section.
+For example, if `QEDfields.jl` is changed, `IntegrationTests.jl` returns that `QED.jl` and `QEDprocesses.jl` are dependent on `QEDfields.jl`, and we can generate the integration test jobs. Full CI pipeline examples for GitLab CI and GitHub Actions can be found in the [Pipeline Tutorials](https://qedjl-project.github.io/IntegrationTests.jl/dev/pipeline_tutorials/) section. For more details on the `IntegrationTests.jl` tool, see the [Integration Test Tool](https://qedjl-project.github.io/IntegrationTests.jl/dev/integration_test_tool/) section.
 
 # Credits
 
