@@ -75,3 +75,8 @@ For example, if `QEDfields.jl` is changed, `IntegrationTests.jl` returns that `Q
 # Credits
 
 This work was partly funded by the [Center for Advanced Systems Understanding (CASUS)](https://www.casus.science) that is financed by Germany’s Federal Ministry of Education and Research (BMBF) and by the Saxon Ministry for Science, Culture and Tourism (SMWK) with tax funds on the basis of the budget approved by the Saxon State Parliament.
+
+Special thanks for concept ideas and discussions:
+
+- Uwe Hernandez Acosta (u.hernandez@hzdr.de)
+- Anton Reinhard (a.reinhard@hzdr.de)
